@@ -6,7 +6,7 @@ if __name__ == '__main__':
         user="root",
         password="root",
         database="covid_db",
-        port='3306',
+        port='3307',
     )
 cursor = mydb.cursor()
 # we returned the actual difference (not the absolute value)

@@ -1,18 +1,8 @@
-import mysql.connector
+# q5.py
+# Query 5: Calculate total new cases for locations with highest population per date,
+# only if the average new cases in that location is greater than 3
 
-if __name__ == '__main__':
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="covid_db",
-        port='3307',
-    )
-cursor = mydb.cursor()
-# we found the locations by the required conditions
-cursor.execute("""
--- Calculate total new cases for locations with the highest population per date,
--- only if the average new cases in that location is greater than 3
+query = """
 SELECT SUM(total_new_cases) AS sum_new_cases
 FROM (
     -- Sum new cases per location
@@ -32,8 +22,7 @@ FROM (
     ) AS max_pop_locations
     ON d.location = max_pop_locations.location
     GROUP BY d.location
-    HAVING AVG(d.new_cases) > 3  -- Only include locations with average new cases > 3
+    -- Only include locations with average new cases > 3
+    HAVING AVG(d.new_cases) > 3
 ) AS final;
-
-""")
-print(', '.join(str(row) for row in cursor.fetchall()))
+"""

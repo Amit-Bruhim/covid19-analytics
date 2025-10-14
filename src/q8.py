@@ -1,23 +1,14 @@
-import mysql.connector
+# q8.py
+# Query 8: Select continents whose average new cases are greater than
+# the average of new cases in locations with average population below the global average
 
-if __name__ == '__main__':
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="covid_db",
-        port='3307',
-    )
-cursor = mydb.cursor()
-# we selected the required continents.
-# we joined the covid_deaths table with the table we created.
-cursor.execute("""
+query = """
 SELECT continent
 FROM (
     -- Step 1: Calculate the average of new_cases for each continent
     SELECT continent, AVG(new_cases) AS continent_avg_cases
     FROM covid_deaths
-    WHERE continent IS NOT NULL AND continent <> ''
+    WHERE continent IS NOT NULL AND continent <> ''  -- ignore empty continent values
     GROUP BY continent
 ) AS continent_avgs
 WHERE continent_avg_cases >
@@ -42,5 +33,4 @@ WHERE continent_avg_cases >
         )
     )
 );
-""")
-print(', '.join(str(row) for row in cursor.fetchall()))
+"""

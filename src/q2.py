@@ -1,17 +1,9 @@
-import mysql.connector
+# q2.py
+# Query 2: Find matching new_cases (>1000) for two different locations on the same date
+# Only the first 1000 rows of the table are considered
 
-if __name__ == '__main__':
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="covid_db",
-        port='3307',
-    )
-cursor = mydb.cursor()
-# we got to the answer step by step
-cursor.execute("""
-		-- Select matching new_cases (>1000) for two different locations on the same date
+query = """
+-- Select matching new_cases (>1000) for two different locations on the same date
 -- the date of the reported cases
 -- number of new cases on that date
 -- first location in the pair
@@ -49,5 +41,4 @@ ORDER BY
     -- sort for readability
     t1.date, t1.location, t2.location;
 
-""")
-print(', '.join(str(row) for row in cursor.fetchall()))
+"""

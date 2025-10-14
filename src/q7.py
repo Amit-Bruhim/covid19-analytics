@@ -1,32 +1,22 @@
-import mysql.connector
+# q7.py
+# Query 7: For each location, calculate monthly average, max, and min of new cases
+# considering year+month separately
 
-if __name__ == '__main__':
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="covid_db",
-        port='3307',
-    )
-cursor = mydb.cursor()
-# we acted according to the forum, we didn't differentiate years.
-cursor.execute("""
--- Calculate monthly statistics (avg, max, min) of new cases for each location, considering both year and month
+query = """
 SELECT 
-    location,                       
-    AVG(monthly_total) AS avg,      
-    MAX(monthly_total) AS max_monthly,
-    MIN(monthly_total) AS min_monthly
+    location,
+    AVG(monthly_total) AS avg,         -- monthly average of new cases per location
+    MAX(monthly_total) AS max_monthly, -- maximum monthly total per location
+    MIN(monthly_total) AS min_monthly  -- minimum monthly total per location
 FROM (
-    -- Step 1: sum new cases per year+month for each location
+    -- Sum new cases per location per year+month
     SELECT 
         location,
-        YEAR(date) AS year,          -- include year to separate months across years
+        YEAR(date) AS year,            -- separate months across different years
         MONTH(date) AS month,
         SUM(new_cases) AS monthly_total
     FROM covid_deaths
     GROUP BY location, YEAR(date), MONTH(date)
 ) AS monthly_cases
 GROUP BY location
-""")
-print(', '.join(str(row) for row in cursor.fetchall()))
+"""

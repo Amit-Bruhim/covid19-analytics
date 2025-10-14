@@ -1,25 +1,7 @@
 import mysql.connector
 import os
 from tabulate import tabulate
-
-def run_query_file(filename, cursor):
-    """Run a query from a Python file that defines a variable 'query'."""
-    file_path = os.path.join(os.path.dirname(__file__), filename)
-    namespace = {}
-    with open(file_path, "r") as f:
-        code = f.read()
-        exec(code, namespace)
-    if "query" in namespace:
-        cursor.execute(namespace["query"])
-        results = cursor.fetchall()
-        columns = [desc[0] for desc in cursor.description]
-        if results:
-            # Print nicely formatted table
-            print(GREEN + tabulate(results, headers=columns, tablefmt="grid") + RESET)
-        else:
-            print(GREEN + "No results returned" + RESET)
-    else:
-        print(RED + f"No 'query' variable found in {filename}" + RESET)
+from decimal import Decimal
 
 # ANSI color codes for terminal
 GREEN = "\033[92m"
@@ -58,11 +40,23 @@ def run_query_file(filename, cursor):
         cursor.execute(namespace["query"])
         results = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
-        # Print header
-        print(GREEN + " | ".join(columns) + RESET)
-        # Print rows
-        for row in results:
-            print(row)
+
+        if results:
+            # Clean results: convert Decimal to int for nicer display
+            results_clean = []
+            for row in results:
+                row_clean = []
+                for val in row:
+                    if isinstance(val, Decimal):
+                        row_clean.append(int(val))
+                    else:
+                        row_clean.append(val)
+                results_clean.append(row_clean)
+
+            # Print nicely formatted table
+            print(GREEN + tabulate(results_clean, headers=columns, tablefmt="grid") + RESET)
+        else:
+            print(GREEN + "No results returned" + RESET)
     else:
         print(RED + f"No 'query' variable found in {filename}" + RESET)
 

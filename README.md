@@ -95,6 +95,8 @@ flush privileges;
 
 ### 7. Install Python dependencies 
 
+exit the MySQL CLI and the container, and go back to your regular terminal (PowerShell / CMD) in the project folder:
+
 ```bash
 pip install mysql-connector-python tabulate
 ```
@@ -151,7 +153,7 @@ weekly_icu_admissions BIGINT,
 weekly_icu_admissions_per_million BIGINT,
 weekly_hosp_admissions BIGINT,
 weekly_hosp_admissions_per_million BIGINT
-)
+);
 ```
 ```bash
 CREATE TABLE covid_db.covid_vaccination (
@@ -193,7 +195,7 @@ hospital_beds_per_thousand FLOAT,
 life_expectancy FLOAT,
 human_development_index FLOAT,
 excess_mortality FLOAT
-)
+);
 ```
 #### 10.3 Import the CSV data
 ```bash
@@ -248,6 +250,13 @@ SET SQL_SAFE_UPDATES = 1;
 
 ALTER TABLE covid_vaccination DROP COLUMN date;
 ALTER TABLE covid_vaccination CHANGE COLUMN date_fixed date DATE;
+```
+
+### 12. Run the Project 🚀
+
+```bash
+cd src
+python run_queries.py 
 ```
 
 ---

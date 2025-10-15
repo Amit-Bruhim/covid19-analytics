@@ -1,3 +1,4 @@
+from fileinput import filename
 import mysql.connector
 import os
 from tabulate import tabulate
@@ -31,7 +32,7 @@ queries = {
 
 def run_query_file(filename, cursor):
     """Run a query from a Python file that defines a variable 'query'."""
-    file_path = os.path.join(os.path.dirname(__file__), filename)
+    file_path = os.path.join(os.path.dirname(__file__), "queries", filename)
     namespace = {}
     with open(file_path, "r") as f:
         code = f.read()
@@ -42,23 +43,30 @@ def run_query_file(filename, cursor):
         columns = [desc[0] for desc in cursor.description]
 
         if results:
-            # Clean results: convert Decimal to int for nicer display
-            results_clean = []
+            # Format numbers to 2 decimal places, avoid scientific notation
+            formatted_results = []
             for row in results:
-                row_clean = []
+                new_row = []
                 for val in row:
-                    if isinstance(val, Decimal):
-                        row_clean.append(int(val))
+                    if isinstance(val, (int, float)):
+                        new_row.append(f"{val:.2f}")
+                    elif isinstance(val, Decimal):
+                        new_row.append(f"{float(val):,.2f}")
                     else:
-                        row_clean.append(val)
-                results_clean.append(row_clean)
+                        new_row.append(val)
+                formatted_results.append(new_row)
 
-            # Print nicely formatted table
-            print(GREEN + tabulate(results_clean, headers=columns, tablefmt="grid") + RESET)
+            # Print header in green
+            print(GREEN + f"\nResults saved to output.txt (total {len(results)} rows)\n" + RESET)
+            
+            # Write full table to file
+            with open("output.txt", "w", encoding="utf-8") as f:
+                f.write(tabulate(formatted_results, headers=columns, tablefmt="grid"))
         else:
             print(GREEN + "No results returned" + RESET)
     else:
         print(RED + f"No 'query' variable found in {filename}" + RESET)
+
 
 def main():
     connection = mysql.connector.connect(**db_config)

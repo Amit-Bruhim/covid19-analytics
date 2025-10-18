@@ -25,7 +25,7 @@ The project demonstrates data manipulation, aggregation, and filtering technique
 
 ---
 
-### Features
+## Features
 
 - Query menu to navigate between different SQL queries:
   1. **Q1:** Difference between the total cases in February (across all years) and in March (Feb-March).  
